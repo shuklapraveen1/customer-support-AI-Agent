@@ -1,0 +1,38 @@
+# Environment
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Real dataset and generated artifacts — never committed.
+# tests/fixtures/ is intentionally NOT ignored: it's synthetic and small.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/splits/*
+!data/splits/.gitkeep
+
+# Retrieval artifacts — regenerable via scripts/build_index.py.
+artifacts/resolutions.parquet
+artifacts/index/*
+!artifacts/index/.gitkeep
+
+# Evaluation artifacts — regenerable via python -m src.evaluation.run_eval.
+artifacts/evaluation/*
+!artifacts/evaluation/.gitkeep
+
+# Golden set / judge validation — regenerable via scripts/create_golden_template.py
+# and python -m src.evaluation.run_eval. NOTE: once you've done real hand-labeling,
+# remove these ignore rules (or force-add the files) so your labels are committed —
+# this default is only correct while the files are auto-generated templates.
+data/golden/*
+!data/golden/.gitkeep
+
+# OS
+.DS_Store

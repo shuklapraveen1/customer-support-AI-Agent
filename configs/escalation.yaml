@@ -1,0 +1,102 @@
+# Escalation policy configuration for the Hiver support agent.
+#
+# STATUS: PLACEHOLDER — these thresholds are illustrative engineering
+# defaults, NOT tuned against any dev-set human judgments. This sandbox has
+# no real, human-labeled dev data (the real Kaggle dataset couldn't be
+# downloaded here — see README), so there is nothing to tune against yet.
+#
+# Before relying on this in anything resembling production:
+#   1. Build the hand-labeled golden eval set (a later phase) with
+#      conversation-level train/dev/test splits, same as everything else
+#      in this project.
+#   2. Sweep these thresholds against DEV-split predictions ONLY —
+#      e.g. maximize auto-handle coverage subject to a minimum precision
+#      on auto-handled cases (checked against human judgment of whether
+#      auto-handling was actually correct).
+#   3. Freeze the thresholds, then evaluate on TEST exactly once. Never
+#      choose final thresholds by looking at test-set performance — doing
+#      so turns "evaluation" into "further tuning" and invalidates the
+#      test numbers as an estimate of real-world performance.
+#
+# See src/agent/escalation.py's module docstring for how these are used —
+# this is a multi-signal policy, not a single confidence<threshold check.
+
+# Auto-handle requires the predicted intent's confidence to clear this bar.
+min_intent_confidence: 0.55
+
+# Auto-handle requires the top retrieved historical evidence's cosine
+# similarity to clear this bar (see also ood_similarity_threshold below,
+# which is a stricter, always-escalate floor).
+min_retrieval_similarity: 0.45
+
+# Auto-handle requires the drafted reply's self-reported grounding_score
+# (from src.agent.reply.ReplyResult) to clear this bar.
+min_grounding_score: 0.5
+
+# Auto-handle requires at least this many historical resolutions to have
+# been retrieved at all.
+min_evidence_count: 1
+
+# Auto-handle requires at least this fraction of retrieved evidence to
+# share the predicted intent (a proxy for "the retrieved precedents don't
+# obviously disagree with what we think this message is about").
+min_evidence_agreement: 0.5
+
+# Hard floor, independent of min_retrieval_similarity: below this, the
+# message is treated as out-of-distribution relative to the historical
+# corpus and ALWAYS escalated, regardless of how confident the intent
+# classifier or reply drafter are.
+ood_similarity_threshold: 0.35
+
+# An intent confidence between min_intent_confidence and
+# (min_intent_confidence + ambiguous_margin) is treated as "ambiguous" —
+# technically above the floor, but not comfortably so — and escalated
+# rather than trusted outright. This is what makes the policy more than
+# a single confidence<threshold check on the intent-confidence axis alone.
+ambiguous_margin: 0.1
+
+# Messages with fewer words than this are treated as lacking enough
+# context to safely auto-handle (a crude proxy for "missing required
+# context" — a real implementation might instead check for specific
+# required fields like an order number by intent).
+min_message_words: 3
+
+# Intents that always require human review, regardless of how confident
+# or well-grounded everything else looks. Currently populated with two
+# intents from the (also placeholder — see configs/intents.yaml)
+# taxonomy that plausibly involve money movement or account security;
+# revisit once a real taxonomy exists.
+high_risk_intents:
+  - billing_dispute
+  - account_access_issue
+
+# Free-text phrases that flag a message as high-risk regardless of
+# predicted intent — defense-in-depth against intent misclassification
+# for genuinely sensitive categories (legal, security/fraud, irreversible
+# account actions).
+high_risk_keywords:
+  - lawsuit
+  - attorney
+  - lawyer
+  - legal action
+  - sue you
+  - gdpr
+  - data breach
+  - hacked
+  - security breach
+  - fraud
+  - chargeback
+  - delete my account
+  - close my account
+  - cancel my account
+
+# Always escalate on these, before any other signal is even checked —
+# a safety/self-harm signal must never be down-weighted by an otherwise
+# "confident" pipeline.
+safety_keywords:
+  - kill myself
+  - suicide
+  - self harm
+  - self-harm
+  - hurt myself
+  - end my life

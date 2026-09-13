@@ -1,0 +1,34 @@
+# Hiver support-agent — Phase 1 (data foundation), Phase 2 (intent
+# discovery/classification), and Phase 3 (historical resolution retrieval)
+# dependencies. No LLM/reply-generation dependencies yet — those are added
+# in a later phase.
+
+pandas==2.2.3
+PyYAML==6.0.2
+pydantic==2.9.2
+python-dateutil==2.9.0.post0
+numpy==1.26.4
+scikit-learn==1.5.2
+pyarrow==17.0.0
+faiss-cpu==1.15.0
+matplotlib==3.10.8
+
+# --- Testing ----------------------------------------------------------
+pytest==8.3.4
+
+# --- Optional (Phase 2/3 embedding classifier + retrieval, production
+# semantic embeddings only) ---------------------------------------------
+# Not installed by default and NOT required by this repo's test suite,
+# which uses the offline HashingEmbedder instead. Install this yourself
+# (and ensure network access to download model weights) to use
+# SentenceTransformerEmbedder for real semantic clustering/classification/
+# retrieval:
+#
+# sentence-transformers==3.2.1
+
+# --- Optional (Phase 4 agent, production LLM provider only) ------------
+# Not installed by default and NOT required by this repo's test suite,
+# which uses the deterministic MockLLMProvider instead. Install this
+# yourself (and set OPENAI_API_KEY) to use LLM_PROVIDER=openai:
+#
+# openai==1.54.0

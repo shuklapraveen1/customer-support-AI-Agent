@@ -1,0 +1,27 @@
+# Hiver support-agent — Phase 1 data configuration.
+#
+# All paths are relative to the repository root (or wherever you invoke the
+# scripts from) and are resolved by src.config.Config.resolve_paths(). No
+# absolute paths are baked in here.
+
+paths:
+  raw_csv: data/raw/twcs.csv
+  processed_dir: data/processed
+  splits_dir: data/splits
+
+split:
+  # Conversation-level split, never tweet-level. Must sum to 1.0.
+  train: 0.7
+  dev: 0.15
+  test: 0.15
+  seed: 42
+
+analysis:
+  # A brand must have at least this many conversations AND this many usable
+  # resolution pairs to be considered for recommendation in
+  # `python -m src.analysis.brands`.
+  min_conversations_for_recommendation: 20
+  # A tweet with this many words or fewer counts as a "short message" in the
+  # data quality report.
+  short_message_max_words: 3
+  top_brands_to_report: 15

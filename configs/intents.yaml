@@ -1,0 +1,128 @@
+# Intent taxonomy for the Hiver support agent.
+#
+# STATUS: PLACEHOLDER / SCAFFOLD — NOT yet derived from real per-brand data.
+#
+# This environment has no network access to kaggle.com, so the real
+# "Customer Support on Twitter" dataset could not be downloaded here, and no
+# brand has been chosen from real data yet. The 10 intents below are a
+# generic, illustrative set of the kinds of issues that commonly show up in
+# retail/consumer Twitter support (order/delivery, billing, account access,
+# app bugs, cancellations, product defects, general sentiment) — written by
+# hand to give the classifier code (src/intent/*) a valid, schema-correct
+# taxonomy to develop and test against. They are NOT measured from any
+# brand's actual tweets and must not be reported as if they were.
+#
+# Before Phase 3 (retrieval / drafting / auto-handle vs escalate), this file
+# MUST be regenerated for real:
+#   1. Pick a brand using `python -m src.analysis.brands` against the real
+#      twcs.csv (see README).
+#   2. Run `python scripts/create_intent_candidates.py --brand <brand>` to
+#      cluster that brand's TRAIN-split customer messages into candidates.
+#   3. Hand-curate (optionally LLM-assisted) those candidates into the
+#      `intents:` list below — merging/splitting/renaming as the actual
+#      cluster keywords and representative examples warrant, generally
+#      landing around 8-15 intents, but let the data decide the exact count.
+#   4. Update `brand:` and `status:` below once that's done.
+#
+# Banking77 (a public banking-intent dataset) is a reasonable methodological
+# reference for what a well-scoped flat intent taxonomy looks like, but it
+# is a different domain (banking, not general Twitter CS) and must never be
+# used as this project's actual label set — see src/analysis/intents.py's
+# module docstring for the fuller rationale.
+
+brand: null
+status: placeholder
+unknown_label: other
+
+intents:
+  - id: delivery_delay
+    name: Delivery Delay / Order Not Arrived
+    description: >
+      Customer reports that an order or delivery has not arrived, is later
+      than expected, or asks where a shipment is with clear frustration
+      about the delay itself.
+    examples:
+      - "My order #123 never arrived, please help!"
+      - "Still waiting on my package, it's been two weeks with no update."
+
+  - id: order_status_inquiry
+    name: Order Status / Tracking Inquiry
+    description: >
+      Customer asks for a status or tracking update on an existing order
+      without necessarily implying anything has gone wrong yet.
+    examples:
+      - "Can you tell me the tracking status for order #4521?"
+      - "Just checking in on my order, any update?"
+
+  - id: refund_request
+    name: Refund Request
+    description: >
+      Customer explicitly asks for a refund or their money back, distinct
+      from a general billing dispute about a charge they don't recognize.
+    examples:
+      - "I want a refund for my order, it's way too late now."
+      - "Please refund me, I already bought this somewhere else."
+
+  - id: billing_dispute
+    name: Billing / Charge Dispute
+    description: >
+      Customer reports an incorrect, unexpected, or duplicate charge on
+      their account or card.
+    examples:
+      - "I was charged twice for the same order, please fix this."
+      - "Why does my bill show a $40 charge I don't recognize?"
+
+  - id: account_access_issue
+    name: Account Access Issue
+    description: >
+      Customer cannot log in, is locked out, or is having password/2FA
+      trouble with their account.
+    examples:
+      - "I can't log into my account, it keeps saying wrong password."
+      - "Locked out of my account after the app update, please help."
+
+  - id: app_technical_issue
+    name: App / Website Technical Issue
+    description: >
+      Customer reports a crash, bug, error message, or broken feature in
+      the brand's app or website that is not specifically a login problem.
+    examples:
+      - "App keeps crashing on login."
+      - "The checkout page just shows a blank screen on my phone."
+
+  - id: cancellation_request
+    name: Cancellation Request
+    description: >
+      Customer wants to cancel an order, subscription, reservation, or
+      service.
+    examples:
+      - "Please cancel my subscription, I don't want to be charged again."
+      - "Can I cancel order #789 before it ships?"
+
+  - id: product_defect_or_quality
+    name: Product Defect / Wrong or Damaged Item
+    description: >
+      Customer received an item that is damaged, defective, incorrect, or
+      otherwise not as described.
+    examples:
+      - "The item arrived broken, the box was crushed."
+      - "This isn't what I ordered, I got the wrong size."
+
+  - id: general_complaint
+    name: General Complaint / Frustration
+    description: >
+      Customer expresses dissatisfaction or frustration without a single
+      clear, specific actionable request (distinct from the more specific
+      intents above).
+    examples:
+      - "This is the third time I've had a problem with your service."
+      - "Your customer support never actually helps with anything."
+
+  - id: compliment_or_positive_feedback
+    name: Compliment / Positive Feedback
+    description: >
+      Customer expresses thanks, satisfaction, or positive feedback rather
+      than reporting a problem.
+    examples:
+      - "Just sent it via DM, thanks!"
+      - "Really appreciate the quick help, you guys are great."
